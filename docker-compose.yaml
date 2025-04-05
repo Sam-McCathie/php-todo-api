@@ -1,0 +1,25 @@
+services:
+  server:
+    build:
+      context: ./server
+    ports:
+      - "9000:80"
+    volumes:
+      - ./server:/var/www/html
+    depends_on:
+      - mysql
+    env_file:
+      - .env
+
+  mysql:
+    image: mysql:8.0
+    env_file:
+      - .env
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  mysql-data:
