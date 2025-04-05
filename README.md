@@ -27,7 +27,14 @@ A lightweight RESTful API for managing a todo list, built with PHP and MySQL, an
    touch .env
    ```
 
-   Update the `.env` file with your desired database credentials.
+   Update the `.env` file the below credentials.
+
+   ```bash
+   MYSQL_ROOT_PASSWORD=rootpassword
+   MYSQL_DATABASE=mydatabase
+   MYSQL_USER=user
+   MYSQL_PASSWORD=password
+   ```
 
 3. Start the Docker containers:
 
