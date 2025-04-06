@@ -1,10 +1,10 @@
 <?php
     require_once 'helpers/helpers.php';
-    require_once 'controllers/todo-controller.php';
-    require_once 'controllers/user-controller.php';
+    require_once 'controllers/todo.php';
+    require_once 'controllers/user.php';
 
 
-    function routes($requestURI, $requestMethod){
+    function routes($requestURI, $requestMethod, $pdo){
         header('Content-Type: application/json');
 
         $todoPattern = '#^/todos(?:/(\d+))?$#';
@@ -15,7 +15,7 @@
 
         if ($todoMatch['matched']) {
             $todoId = $todoMatch['id'];
-            $todoController = new TodoController;
+            $todoController = new TodoController($pdo);
             $todoController->handleRequest($requestMethod, $todoId);
         } else if ($userMatch['matched']) {
             $userId = $userMatch['id'];
