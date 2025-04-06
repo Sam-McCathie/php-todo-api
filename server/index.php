@@ -1,7 +1,9 @@
 <?php
-    $user = getEnv("MYSQL_USER");
-
-    echo json_encode(["message" => "Laoded env vars",
-    "MYSQL_USER" => $user
-]);
+    require_once "./routes/routes.php";
+    
+    $requestURI = $_SERVER['REQUEST_URI']; // URL of request
+    $requestMethod = $_SERVER['REQUEST_METHOD']; // request method
+    // $user = getEnv("MYSQL_USER");
+    
+    routes($requestURI, $requestMethod);  
 ?>
