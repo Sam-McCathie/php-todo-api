@@ -8,8 +8,8 @@ class TodoModel {
 
     public function createTodo($userId, $text){
         $stmt = $this->pdo->prepare('INSERT INTO todos (user_id, text) VALUES (:userId, :text)');
-        $stmt->execute(['userId'=>$userId, "text"=>$text]);
-        return $this->pdo->lastInsertedId();
+        $stmt->execute(["userId"=> $userId, "text"=>$text]);
+        return $this->pdo->lastInsertId();
     }
 }
 ?>

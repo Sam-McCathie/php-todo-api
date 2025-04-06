@@ -1,7 +1,7 @@
 <?php
     require_once "./routes/routes.php";
 
-    $database = getEnv("MYQL_DATABASE");
+    $database = getEnv("MYSQL_DATABASE");
     $user = getEnv("MYSQL_USER");
     $password = getEnv("MYSQL_PASSWORD");
 
