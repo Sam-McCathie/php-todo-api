@@ -21,9 +21,9 @@ public function handleRequest($requestMethod, $todoId = null){
             case 'POST' :
                 $input = json_decode(file_get_contents('php://input'),true);
                 if(isset($input["userId"]) && isset($input["text"])){
-                    $todoId = $this->todoModel->createTodo($input["userId"],$input["text"]);
+                    $response = $this->todoModel->createTodo($input["userId"],$input["text"]);
                     http_response_code(201);
-                    echo json_encode(["message" => "todo created by user {$input['userId']}, todo id = {$todoId}"]);
+                    echo json_encode($response);
                 } else {
                     $errorMessage = "";
                     if(!isset($input["userId"])){
@@ -55,7 +55,11 @@ public function handleRequest($requestMethod, $todoId = null){
         }
     } catch (Exception $e) {
     http_response_code(500);
-    echo json_encode(["error" => "An error occurred: " . $e->getMessage()]);
+    echo json_encode([
+        "status" => "error",
+        "message" => $e->getMessage(),
+        "data" => null
+    ]);
     }  
 }}
 ?>
