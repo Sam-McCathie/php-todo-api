@@ -52,7 +52,7 @@ class TodoModel {
         if($stmt->rowCount() === 0){
             echo json_encode([
                 "status" => "error",
-                "message" => "todoId: $todoId not found",
+                "message" => "Error updating todo. todoId: $todoId not found",
                 "data" => null
             ]);
             exit;
@@ -69,9 +69,19 @@ class TodoModel {
     public function deleteTodo($todoId){
        $stmt = $this->pdo->prepare('DELETE FROM todos WHERE todo_id = :todoId');
        $stmt->execute(["todoId"=>$todoId]);
+
+       if($stmt->rowCount() === 0){
+        echo json_encode([
+            "status" => "error",
+            "message" => "Error deleting todo. todoId: $todoId not found",
+            "data" => null
+        ]);
+        exit;
+    }
+
        return [
         "status" => "success",
-        "message" => "Todo deleted successfully.",
+        "message" => "todoId: $todoId deleted successfully.",
         "data" => null
     ];
     }

@@ -54,9 +54,14 @@ public function handleRequest($requestMethod, $todoId = null){
                 break;
             case "DELETE" :
                 if(isset($todoId)){
-                    echo json_encode(["message" => "todo deleted"]);
+                    $response = $this->todoModel->deleteTodo($todoId);
+                    echo json_encode($response);
                 } else {
-                    echo json_encode(["error" => "UserId required to delete"]);
+                    echo json_encode ([
+                        "status" => "error",
+                        "message" => "todoId required to Delete",
+                        "data" => null
+                    ]);
                 }
                 break;
             default :
