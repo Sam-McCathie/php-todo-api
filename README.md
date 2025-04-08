@@ -1,4 +1,4 @@
-# PHP Todo API
+# [WIP] PHP Todo API
 
 A lightweight RESTful API for managing a todo list, built with PHP and MySQL, and containerized using Docker.
 
