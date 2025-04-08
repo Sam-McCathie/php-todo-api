@@ -50,6 +50,7 @@ class TodoModel {
         $stmt->execute(["todoId" => $todoId, "text" => $text]);
 
         if($stmt->rowCount() === 0){
+            http_response_code(404);
             echo json_encode([
                 "status" => "error",
                 "message" => "Error updating todo. todoId: $todoId not found",
@@ -71,6 +72,7 @@ class TodoModel {
        $stmt->execute(["todoId"=>$todoId]);
 
        if($stmt->rowCount() === 0){
+        http_response_code(404);
         echo json_encode([
             "status" => "error",
             "message" => "Error deleting todo. todoId: $todoId not found",

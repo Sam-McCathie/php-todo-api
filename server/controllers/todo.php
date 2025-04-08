@@ -20,9 +20,10 @@ public function handleRequest($requestMethod, $todoId = null){
                     $response = $this->todoModel->getTodo($userId, $todoId);
                     echo json_encode($response);
                 }  else {
+                    http_response_code(400);
                     echo json_encode ([
                         "status" => "error",
-                        "message" => "Please provide a userId",
+                        "message" => "userId required to GET",
                         "data" => null
                     ]);
                 }
@@ -33,6 +34,7 @@ public function handleRequest($requestMethod, $todoId = null){
                     http_response_code(201);
                     echo json_encode($response);
                 } else {
+                    http_response_code(400);
                     echo json_encode([
                         "status" => "error",
                         "message" => "userId($userId) & text($text) required to POST",
@@ -45,6 +47,7 @@ public function handleRequest($requestMethod, $todoId = null){
                     $response = $this->todoModel->updateTodo($todoId, $text);
                     echo json_encode($response);
                 } else {
+                    http_response_code(400);
                     echo json_encode([
                         "status" => "error",
                         "message" => "todoId($todoId) & text($text) required to PATCH",
@@ -57,6 +60,7 @@ public function handleRequest($requestMethod, $todoId = null){
                     $response = $this->todoModel->deleteTodo($todoId);
                     echo json_encode($response);
                 } else {
+                    http_response_code(400);
                     echo json_encode ([
                         "status" => "error",
                         "message" => "todoId required to Delete",
