@@ -6,7 +6,10 @@
     $password = getEnv("MYSQL_PASSWORD");
 
     try{
-        $pdo = new PDO("mysql:host=mysql;port=3306;dbname=$database;charset=utf8mb4", $user, $password);
+        $pdo = new PDO("mysql:host=mysql;port=3306;dbname=$database;charset=utf8mb4", $user, $password, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, // Enable exceptions for errors
+            PDO::ATTR_EMULATE_PREPARES => false,         // Disable emulated prepared statements 
+        ]);
     } catch(PDOException $e){
         http_response_code(500);
         echo json_encode(['error' => 'Database connection failed: ' . $e->getMessage()]);
