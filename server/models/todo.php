@@ -6,23 +6,34 @@ class TodoModel {
         $this->pdo = $pdo;
     }
 
+    # PDO Errors caught in controller
+
     public function getTodo($userId, $todoId){
-        if($todoId){
-            $stmt = $this->pdo->prepare('SELECT * FROM todos WHERE user_id = :userId AND todo_id = :todoId');
-            $stmt->execute(["userId"=>$userId, "todoId"=>$todoId]);
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        } else {
-            $stmt = $this->pdo->prepare('SELECT * FROM todos WHERE user_id = :userId');
-            $stmt->execute(["userId"=>$userId]);
-            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        }
-        return [
-            "status" => "success",
-            "message" => "Todo(s) retrieved successfully.",
-            "data" => $result
-        ];
+            if(isset($userId) && isset($todoId)){
+                $stmt = $this->pdo->prepare('SELECT * FROM todos WHERE user_id = :userId AND todo_id = :todoId');
+                $stmt->execute(["userId"=>$userId, "todoId"=>$todoId]);
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            } else {
+                $stmt = $this->pdo->prepare('SELECT * FROM todos WHERE user_id = :userId');
+                $stmt->execute(["userId"=>$userId]);
+                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
+
+            if (!$result) {
+                return [
+                    "status" => "success",
+                    "message" => "No todo(s) found.",
+                    "data" => []
+                ];
+            }
+
+            return [
+                "status" => "success",
+                "message" => "Todo(s) retrieved successfully.",
+                "data" => $result
+            ];
     }
-    
+
     public function createTodo($userId, $text){
         $stmt = $this->pdo->prepare('INSERT INTO todos (user_id, text) VALUES (:userId, :text)');
         $stmt->execute(["userId"=> $userId, "text"=>$text]);

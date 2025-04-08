@@ -10,12 +10,21 @@ public function __construct($pdo){
 
 public function handleRequest($requestMethod, $todoId = null){
     try{    
+        $input = json_decode(file_get_contents('php://input'), true);
+        $userId = $input["userId"] ?? null;
+        $text = $input["text"] ?? null;
+
         switch($requestMethod){
             case 'GET' :
-                if(isset($todoId)){
-                    echo json_encode(["data" => "todo data retrieved"]);
-                } else {
-                    echo json_encode(["data" => "todos data retrieved"]);
+                if(isset($userId)){
+                    $response = $this->todoModel->getTodo($userId, $todoId);
+                    echo json_encode($response);
+                }  else {
+                    echo json_encode ([
+                        "status" => "error",
+                        "message" => "Please provide a userId",
+                        "data" => null
+                    ]);
                 }
                 break;
             case 'POST' :
