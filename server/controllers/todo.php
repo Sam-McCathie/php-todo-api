@@ -28,19 +28,16 @@ public function handleRequest($requestMethod, $todoId = null){
                 }
                 break;
             case 'POST' :
-                $input = json_decode(file_get_contents('php://input'),true);
-                if(isset($input["userId"]) && isset($input["text"])){
+                if(isset($userId) && isset($text)){
                     $response = $this->todoModel->createTodo($input["userId"],$input["text"]);
                     http_response_code(201);
                     echo json_encode($response);
                 } else {
-                    $errorMessage = "";
-                    if(!isset($input["userId"])){
-                        $errorMessage = "todo userId not set";
-                    } else {
-                        $errorMessage = "todo text not set";
-                    }
-                    echo json_encode(["error" => $errorMessage]);
+                    echo json_encode([
+                        "status" => "error",
+                        "message" => "userId($userId) & text($text) required to POST",
+                        "data" => null
+                    ]);
                 }
                 break;
             case 'PATCH' :
