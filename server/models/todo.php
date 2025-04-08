@@ -25,6 +25,7 @@ class TodoModel {
                     "message" => "No todo(s) found.",
                     "data" => []
                 ];
+                exit;
             }
 
             return [
@@ -46,7 +47,17 @@ class TodoModel {
 
     public function updateTodo($todoId, $text){
         $stmt = $this->pdo->prepare('UPDATE todos SET text = :text WHERE todo_id = :todoId');
-        return $stmt->execute(["todoId" => $todoId, "text"=>$text]);
+        $stmt->execute(["todoId" => $todoId, "text" => $text]);
+
+        if($stmt->rowCount() === 0){
+            echo json_encode([
+                "status" => "error",
+                "message" => "todoId: $todoId not found",
+                "data" => null
+            ]);
+            exit;
+        }
+
         return [
             "status" => "success",
             "message" => "Todo updated successfully.",

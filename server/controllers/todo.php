@@ -44,10 +44,15 @@ public function handleRequest($requestMethod, $todoId = null){
                 }
                 break;
             case 'PATCH' :
-                if(isset($todoId)){
-                    echo json_encode(["message" => "todo updated"]);
+                if(isset($todoId) && isset($text)){
+                    $response = $this->todoModel->updateTodo($todoId, $text);
+                    echo json_encode($response);
                 } else {
-                    echo json_encode(["error" => "UserId required to update"]);
+                    echo json_encode([
+                        "status" => "error",
+                        "message" => "todoId($todoId) & text($text) required to PATCH",
+                        "data" => null
+                    ]);
                 }
                 break;
             case "DELETE" :
