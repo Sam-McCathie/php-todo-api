@@ -45,8 +45,9 @@ class TodoModel {
     public function updateTodo($todoId, $text){
         $stmt = $this->pdo->prepare('UPDATE todos SET text = :text WHERE todo_id = :todoId');
         $stmt->execute(["todoId" => $todoId, "text" => $text]);
+        $rowsModified = $stmt->rowCount();
 
-        if ($stmt->rowCount() === 0) {
+        if ($rowsModified === 0) {
             return [
                 "status" => "error",
                 "message" => "Error updating todo. todoId: $todoId not found",
@@ -63,8 +64,9 @@ class TodoModel {
     public function deleteTodo($todoId){
         $stmt = $this->pdo->prepare('DELETE FROM todos WHERE todo_id = :todoId');
         $stmt->execute(["todoId" => $todoId]);
+        $rowsModified = $stmt->rowCount();
 
-        if ($stmt->rowCount() === 0) {
+        if ($rowsModified === 0) {
             return [
                 "status" => "error",
                 "message" => "Error deleting todo. todoId: $todoId not found",
