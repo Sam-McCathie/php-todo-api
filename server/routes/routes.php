@@ -23,7 +23,10 @@
             $userController->handleRequest($requestMethod, $userId);
         } else {
             http_response_code(404);
-            echo json_encode(["error" => "Endpoint not valid"]);
+            echo json_encode([
+                "status" => "error",
+                "message" => "Endpoint not valid"
+            ]);
         }
     }
 ?>
