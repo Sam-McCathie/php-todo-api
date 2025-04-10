@@ -1,5 +1,6 @@
 <?php
 require_once "models/todo.php";
+require_once "helpers/helpers.php";
 
 class TodoController {
     private $todoModel;
@@ -18,9 +19,9 @@ class TodoController {
                 case 'GET':
                     if (isset($userId)) {
                         $response = $this->todoModel->getTodo($userId, $todoId);
-                        $this->sendResponse($response);
+                        sendResponse($response);
                     } else {
-                        $this->sendResponse([
+                        sendResponse([
                             "status" => "error",
                             "message" => "userId required to GET",
                         ], 400);
@@ -30,9 +31,9 @@ class TodoController {
                 case 'POST':
                     if (isset($userId) && isset($text)) {
                         $response = $this->todoModel->createTodo($userId, $text);
-                        $this->sendResponse($response, 201);
+                        sendResponse($response, 201);
                     } else {
-                        $this->sendResponse([
+                        sendResponse([
                             "status" => "error",
                             "message" => "userId($userId) & text($text) required to POST",
                         ], 400);
@@ -42,9 +43,9 @@ class TodoController {
                 case 'PATCH':
                     if (isset($todoId) && isset($text)) {
                         $response = $this->todoModel->updateTodo($todoId, $text);
-                        $this->sendResponse($response, $response['httpCode'] ?? 200);
+                        sendResponse($response, $response['httpCode'] ?? 200);
                     } else {
-                        $this->sendResponse([
+                        sendResponse([
                             "status" => "error",
                             "message" => "todoId($todoId) & text($text) required to PATCH",
                         ], 400);
@@ -54,9 +55,9 @@ class TodoController {
                 case 'DELETE':
                     if (isset($todoId)) {
                         $response = $this->todoModel->deleteTodo($todoId);
-                        $this->sendResponse($response, $response['httpCode'] ?? 200);
+                        sendResponse($response, $response['httpCode'] ?? 200);
                     } else {
-                        $this->sendResponse([
+                        sendResponse([
                             "status" => "error",
                             "message" => "todoId required to Delete",
                         ], 400);
@@ -64,20 +65,15 @@ class TodoController {
                     break;
 
                 default:
-                    $this->sendResponse(["error" => "Method not allowed"], 405);
+                    sendResponse(["error" => "Method not allowed"], 405);
                     break;
             }
         } catch (Exception $e) {
-            $this->sendResponse([
+            sendResponse([
                 "status" => "error",
                 "message" => $e->getMessage(),
             ], 500);
         }
-    }
-
-    private function sendResponse($response, $httpCode = 200) {
-        http_response_code($httpCode);
-        echo json_encode($response);
     }
 }
 ?>
