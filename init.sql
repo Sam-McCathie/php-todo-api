@@ -1,14 +1,14 @@
+CREATE DATABASE IF NOT EXISTS mydatabase;
+
 USE mydatabase;
 
--- Create the users table
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(255) NOT NULL,
+    username VARCHAR(255) NOT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create the todos table
-CREATE TABLE todos (
+CREATE TABLE IF NOT EXISTS todos (
     todo_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     text TEXT NOT NULL,

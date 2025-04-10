@@ -30,8 +30,21 @@ class TodoController {
 
                 case 'POST':
                     if (isset($userId) && isset($text)) {
-                        $response = $this->todoModel->createTodo($userId, $text);
-                        sendResponse($response, 201);
+                        try{
+                            $response = $this->todoModel->createTodo($userId, $text);
+                            sendResponse($response, 201);
+                        } catch (PDOException $e) {
+                            $errorCode = $e->errorInfo[1];
+                            if ($errorCode == 1452) { // Foreign key constraint violation
+                                sendResponse([
+                                    "status" => "error",
+                                    "message" => "Invalid user_id. The user does not exist.",
+                                ], 400);
+                                exit;
+                            } else {
+                                throw $e;
+                            }
+                        }
                     } else {
                         sendResponse([
                             "status" => "error",
@@ -68,11 +81,27 @@ class TodoController {
                     sendResponse(["error" => "Method not allowed"], 405);
                     break;
             }
-        } catch (Exception $e) {
-            sendResponse([
-                "status" => "error",
-                "message" => $e->getMessage(),
-            ], 500);
+        } catch (PDOException $e) {
+            $errorCode = $e->errorInfo[1];
+            if ($errorCode === 22007) { // Invalid data type
+                sendResponse([
+                    "status" => "error",
+                    "message" => "Invalid input data type.",
+                ], 400);
+                exit;
+            } else if ($errorCode === 1406) { // Data too long for column
+                sendResponse([
+                    "status" => "error",
+                    "message" => "Input data exceeds the allowed length.",
+                ], 400);
+                exit;
+            } else {
+                sendResponse([
+                    "status" => "error",
+                    "message" => $e->getMessage(),
+                ], 500);
+            }
+
         }
     }
 }

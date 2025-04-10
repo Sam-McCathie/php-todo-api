@@ -22,8 +22,21 @@
                         break;
                     case 'POST' :
                         if(isset($username)){
-                            $response = $this->userModel->createUser($username);
-                            sendResponse($response, 201);
+                            try {
+                                $response = $this->userModel->createUser($username);
+                                sendResponse($response, 201);
+                            } catch (PDOException $e) {
+                                $errorCode = $e->errorInfo[1]; // MySQL-specific error number
+                                if ($errorCode == 1062) { // MySQL error code for duplicate entry
+                                    sendResponse([
+                                        "status" => "error",
+                                        "message" => "Username '$username' already exists.",
+                                    ], 409); // HTTP 409 Conflict
+                                    exit;
+                                } else {
+                                    throw $e; 
+                                }
+                            }
                         } else {
                             sendResponse([
                                 "status" => "error",
@@ -60,11 +73,26 @@
                         echo json_encode(["error" => "Method not allowed"]);
                         break;
                 }
-            } catch (Exception $e) {
+            } catch (PDOException $e) {
+                $errorCode = $e->errorInfo[1];
+            if ($errorCode === 22007) { // Invalid data type
+                sendResponse([
+                    "status" => "error",
+                    "message" => "Invalid input data type.",
+                ], 400);
+                exit;
+            } else if ($errorCode === 1406) { // Data too long for column
+                sendResponse([
+                    "status" => "error",
+                    "message" => "Input data exceeds the allowed length.",
+                ], 400);
+                exit;
+            } else {
                 sendResponse([
                     "status" => "error",
                     "message" => $e->getMessage(),
                 ], 500);
+            }
             }
         }
     }
