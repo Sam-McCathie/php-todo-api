@@ -19,7 +19,7 @@
             $todoController->handleRequest($requestMethod, $todoId);
         } else if ($userMatch['matched']) {
             $userId = $userMatch['id'];
-            $userController = new UserController;
+            $userController = new UserController($pdo);
             $userController->handleRequest($requestMethod, $userId);
         } else {
             http_response_code(404);
