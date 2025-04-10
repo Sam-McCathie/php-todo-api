@@ -23,7 +23,7 @@
                     case 'POST' :
                         if(isset($username)){
                             $response = $this->userModel->createUser($username);
-                            sendResponse($response);
+                            sendResponse($response, 201);
                         } else {
                             sendResponse([
                                 "status" => "error",
@@ -34,10 +34,14 @@
                         echo json_encode(["message" => "user created"]);
                         break;
                     case 'PATCH' :
-                        if(isset($userId)){
-                            echo json_encode(["message" => "user updated"]);
+                        if(isset($userId) && isset($username)){
+                            $response = $this->userModel->updateUser($userId, $username);
+                            sendResponse($response, $response['httpCode'] ?? 200);
                         } else {
-                            echo json_encode(["error" => "UserId required to update"]);
+                            sendResponse([
+                                "status" => "error",
+                                "message" => "userId($userId) & username($username) required to PATCH",
+                            ], 400);
                         }
                         break;
                     case "DELETE" :

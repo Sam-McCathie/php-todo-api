@@ -43,10 +43,11 @@ class UserModel{
     public function createUser($username){
         $stmt = $this->pdo->prepare("INSERT INTO users (username) VALUES (:username)");
         $stmt->execute(["username" => $username]);
+        $rowsModified = $stmt->rowCount();
 
         // Expand upon this error handling in future.
         // Update mysql to make usernames unique and handle error case accordingly
-        if ($stmt->rowCount() === 0) {
+        if ($rowsModified === 0) {
             throw new Exception("Failed to create user: '$username'.");
         }
 
@@ -58,7 +59,22 @@ class UserModel{
     }
 
     public function updateUser($userId, $username){
+        $stmt = $this->pdo->prepare("UPDATE users SET username = :username WHERE user_id = :userId");
+        $stmt->execute(["userId" => $userId, "username" => $username]);
+        $rowsModified = $stmt->rowCount();
 
+        if($rowsModified === 0){
+            return [
+                "status" => "error",
+                "message" => "Error updating user. userId: $userId not found",
+                "httpCode" => 404
+            ];
+        }
+
+        return [
+            "status" => "success",
+            "message" => "User updated successfully.",
+        ];
     }
 
     public function deleteUser($userId){
