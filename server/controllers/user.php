@@ -9,18 +9,16 @@
             $this->userModel = new UserModel($pdo); 
         }
 
+        # userId passed as param
         public function handleRequest($requestMethod, $userId = null){
             try{
                 $input = json_decode(file_get_contents('php://input'), true);
-                $username = $input["username"];
+                $username = $input["username"] ?? null;
 
                 switch($requestMethod){
                     case 'GET' :
-                        if(isset($userId)){
-                            echo json_encode(["data" => "user data retrieved"]);
-                        } else {
-                            echo json_encode(["data" => "users data retrieved"]);
-                        }
+                        $response = $this->userModel->getUser($userId);
+                        sendResponse($response);
                         break;
                     case 'POST' :
                         if(isset($username)){
