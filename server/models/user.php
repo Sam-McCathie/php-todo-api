@@ -43,6 +43,13 @@ class UserModel{
     public function createUser($username){
         $stmt = $this->pdo->prepare("INSERT INTO users (username) VALUES (:username)");
         $stmt->execute(["username" => $username]);
+
+        // Expand upon this error handling in future.
+        // Update mysql to make usernames unique and handle error case accordingly
+        if ($stmt->rowCount() === 0) {
+            throw new Exception("Failed to create user: '$username'.");
+        }
+
         return [
             "status" => "success",
             "message" => "user: '$username', created successfully",
