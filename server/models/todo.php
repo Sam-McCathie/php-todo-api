@@ -6,6 +6,7 @@ class TodoModel {
         $this->pdo = $pdo;
     }
 
+    # todoId passed as url param
     public function getTodo($userId, $todoId){
         if (isset($userId) && isset($todoId)) {
             $stmt = $this->pdo->prepare('SELECT * FROM todos WHERE user_id = :userId AND todo_id = :todoId');

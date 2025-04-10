@@ -9,7 +9,7 @@
             $this->userModel = new UserModel($pdo); 
         }
 
-        # userId passed as param
+        # userId passed as url param
         public function handleRequest($requestMethod, $userId = null){
             try{
                 $input = json_decode(file_get_contents('php://input'), true);
@@ -46,9 +46,13 @@
                         break;
                     case "DELETE" :
                         if(isset($userId)){
-                            echo json_encode(["message" => "user deleted"]);
+                            $response = $this->userModel->deleteUser($userId);
+                            sendResponse($response, $response['httpCode'] ?? 200);
                         } else {
-                            echo json_encode(["error" => "UserId required to delete"]);
+                            sendResponse([
+                                "status" => "error",
+                                "message" => "userId($userId) required to DELETE",
+                            ], 400);
                         }
                         break;
                     default :

@@ -78,6 +78,21 @@ class UserModel{
     }
 
     public function deleteUser($userId){
+        $stmt = $this->pdo->prepare("DELETE FROM users WHERE user_id = :userId");
+        $stmt->execute(["userId" => $userId]);
+        $rowsModified = $stmt->rowCount();
 
+        if($rowsModified === 0){
+            return [
+                "status" => "error",
+                "message" => "Error deleting user. userId: $userId not found",
+                "httpCode" => 404
+            ];
+        }
+
+        return [
+            "status" => "success",
+            "message" => "userId: $userId deleted successfully.",
+        ];
     }
 }
