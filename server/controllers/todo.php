@@ -14,6 +14,7 @@ class TodoController {
             $input = json_decode(file_get_contents('php://input'), true);
             $userId = $input["userId"] ?? null;
             $text = $input["text"] ?? null;
+            $complete = $input["complete"] ?? null;
 
             switch ($requestMethod) {
                 case 'GET':
@@ -54,13 +55,18 @@ class TodoController {
                     break;
 
                 case 'PATCH':
-                    if (isset($todoId) && isset($text)) {
-                        $response = $this->todoModel->updateTodo($todoId, $text);
+                    if (isset($todoId) && (isset($text) || isset($complete))) {
+                        $response = $this->todoModel->updateTodo($todoId, $text, $complete);
                         sendResponse($response, $response['httpCode'] ?? 200);
+                    } else if (!isset($text) && !isset($complete)){
+                        sendResponse([
+                            "status" => "error",
+                            "message" => "text($text) and or complete($complete) required to PATCH",
+                        ], 400);
                     } else {
                         sendResponse([
                             "status" => "error",
-                            "message" => "todoId($todoId) & text($text) required to PATCH",
+                            "message" => "todoId($todoId) required to PATCH",
                         ], 400);
                     }
                     break;
@@ -82,7 +88,7 @@ class TodoController {
                     break;
             }
         } catch (PDOException $e) {
-            $errorCode = $e->errorInfo[1];
+            $errorCode = $e->errorInfo[1] ?? null;
             if ($errorCode === 22007) { // Invalid data type
                 sendResponse([
                     "status" => "error",

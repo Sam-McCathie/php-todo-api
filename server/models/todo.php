@@ -43,22 +43,59 @@ class TodoModel {
         ];
     }
 
-    public function updateTodo($todoId, $text){
-        $stmt = $this->pdo->prepare('UPDATE todos SET text = :text WHERE todo_id = :todoId');
-        $stmt->execute(["todoId" => $todoId, "text" => $text]);
+    public function updateTodo($todoId, $text, $complete){
+        #todoId is checked in controller
+        if (isset($text) && isset($complete)) {
+            $stmt = $this->pdo->prepare(
+                'UPDATE todos 
+                SET text = :text, complete = :complete 
+                WHERE todo_id = :todoId'
+            );
+            $stmt->execute(["todoId" => $todoId, "text" => $text, "complete" => $complete]);
+            $action = "text & complete";
+        } else if (isset($text)) {
+            $stmt = $this->pdo->prepare(
+                'UPDATE todos 
+                SET text = :text 
+                WHERE todo_id = :todoId'
+            );
+            $stmt->execute(["todoId" => $todoId, "text" => $text]);
+            $action = "text";
+        } else {
+            $stmt = $this->pdo->prepare(
+                'UPDATE todos 
+                SET complete = :complete 
+                WHERE todo_id = :todoId'
+            );
+            $stmt->execute(["todoId" => $todoId, "complete" => $complete]);
+            $action = "complete";
+        }
+
         $rowsModified = $stmt->rowCount();
 
         if ($rowsModified === 0) {
-            return [
-                "status" => "error",
-                "message" => "Error updating todo. todoId: $todoId not found",
-                "httpCode" => 404
-            ];
+            // Check if the todoId exists
+            $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM todos WHERE todo_id = :todoId');
+            $stmt->execute(["todoId" => $todoId]);
+            $todoExists = $stmt->fetchColumn();
+
+            if(!$todoExists){
+                return [
+                    "status" => "error",
+                    "message" => "Error updating todo. todoId: $todoId not found",
+                    "httpCode" => 404
+                ];
+            } else {
+                return [
+                        "status" => "success",
+                        "message" => "No changes made. Data already matches the database.",
+                ];
+            }
         }
 
         return [
             "status" => "success",
-            "message" => "Todo updated successfully.",
+            "message" => "Todo $action updated successfully.",
         ];
     }
 
