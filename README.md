@@ -50,14 +50,21 @@ The database schema is automatically initialized using the `init.sql` file. This
 
 ## Endpoints
 
-- `GET /todos` - Retrieve all todos.
-- `POST /todos` - Create a new todo.
-- `PUT /todos/{id}` - Update an existing todo.
-- `DELETE /todos/{id}` - Delete a todo.
+### Todos
+
+- `GET /todos` - Retrieve all todos for a user (requires `userId` in the request body).
+- `GET /todos/{id}` - Retrieve a specific todo by ID for a user (requires `userId` in the request body).
+- `POST /todos` - Create a new todo (requires `userId` and `text` in the request body).
+- `PATCH /todos/{id}` - Update an existing todo (requires `todoId` in the URL and at least one of `text` or `complete` in the request body).
+- `DELETE /todos/{id}` - Delete a todo by ID.
+
+### Users
+
 - `GET /users` - Retrieve all users.
-- `POST /users` - Create a new user.
-- `PUT /users/{id}` - Update an existing user.
-- `DELETE /users/{id}` - Delete a user.
+- `GET /users/{id}` - Retrieve a specific user by ID.
+- `POST /users` - Create a new user (requires `username` in the request body).
+- `PATCH /users/{id}` - Update an existing user (requires `userId` in the URL and `username` in the request body).
+- `DELETE /users/{id}` - Delete a user by ID.
 
 ## Development
 
