@@ -45,8 +45,6 @@ class UserModel{
         $stmt->execute(["username" => $username]);
         $rowsModified = $stmt->rowCount();
 
-        // Expand upon this error handling in future.
-        // Update mysql to make usernames unique and handle error case accordingly
         if ($rowsModified === 0) {
             throw new Exception("Failed to create user: '$username'.");
         }
@@ -64,11 +62,23 @@ class UserModel{
         $rowsModified = $stmt->rowCount();
 
         if($rowsModified === 0){
-            return [
-                "status" => "error",
-                "message" => "Error updating user. userId: $userId not found",
-                "httpCode" => 404
-            ];
+            // Check if the userId exists
+            $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM users WHERE user_id = :userId');
+            $stmt->execute(["userId" => $userId]);
+            $userExists = $stmt->fetchColumn();
+
+            if(!$userExists){
+                return [
+                    "status" => "error",
+                    "message" => "Error updating user. userId: $userId not found",
+                    "httpCode" => 404
+                ];
+            } else {
+                return [
+                    "status" => "success",
+                    "message" => "No changes made. username already matches the database.",
+                ];
+            }  
         }
 
         return [
